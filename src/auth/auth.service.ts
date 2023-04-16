@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { MailService } from 'src/mail/mail.service';
 import { UnauthorizedError } from './errors/unauthorized.error';
+import { NotFoundError } from './errors/not-found.error';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { UserPayload } from './models/UserPayload';
@@ -11,7 +13,8 @@ import { UserToken } from './models/UserToken';
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly emailService: MailService
   ) {}
 
   async signIn(user: UserEntity): Promise<UserToken> {
@@ -37,7 +40,21 @@ export class AuthService {
     );
   }
 
+  async sendEmailToSetPassword(email: string) {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) throw new NotFoundError('Email não encontrado!');
+
+    const { access_token } = await this.signIn(user);
+
+    await this.emailService.sendUserSetPassword(user, access_token);
+  }
+
   async setPassword(email: string, newPassword: string) {
-    return await this.userService.setPassword(email, newPassword);
+    const encryptedPassword = this.userService.bcryptPassword(newPassword);
+
+    const { id } = await this.userService.setPassword(email, encryptedPassword);
+
+    return { id, email };
   }
 }
