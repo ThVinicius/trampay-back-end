@@ -15,4 +15,11 @@ export class UserRepository implements UserRepositoryInterface {
   async findByEmail(email: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { email } });
   }
+
+  async setPassword(email: string, newPassword: string): Promise<User> {
+    return await this.prisma.user.update({
+      where: { email },
+      data: { password: newPassword }
+    });
+  }
 }

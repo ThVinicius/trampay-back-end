@@ -19,6 +19,10 @@ export class UserService {
     return this.repository.findByEmail(email);
   }
 
+  async setPassword(email: string, newPassword: string) {
+    return await this.repository.setPassword(email, newPassword);
+  }
+
   private bcryptPassword(password: string) {
     const saltRounds = 10;
 

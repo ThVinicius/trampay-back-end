@@ -36,4 +36,8 @@ export class AuthService {
       'O endereço de e-mail ou a senha fornecidos estão incorretos.'
     );
   }
+
+  async setPassword(email: string, newPassword: string) {
+    return await this.userService.setPassword(email, newPassword);
+  }
 }

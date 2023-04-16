@@ -3,13 +3,18 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Patch,
   Request,
-  UseGuards
+  UseGuards,
+  Body
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { IsPublic } from './decorators/is-public.decorator';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { SetPasswordDto } from './dtos/set-password.dto';
 
 @Controller('api')
 export class AuthController {
@@ -21,5 +26,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Request() req: AuthRequest) {
     return this.authService.signIn(req.user);
+  }
+
+  @Patch('set-password')
+  async setPassword(
+    @CurrentUser() currentUser: UserEntity,
+    @Body() body: SetPasswordDto
+  ) {
+    return this.authService.setPassword(currentUser.email, body.password);
   }
 }
