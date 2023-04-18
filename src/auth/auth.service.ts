@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { MailService } from 'src/mail/mail.service';
 import { UnauthorizedError } from './errors/unauthorized.error';
@@ -17,13 +17,16 @@ export class AuthService {
     private readonly emailService: MailService
   ) {}
 
-  async signIn(user: UserEntity): Promise<UserToken> {
+  async signIn(
+    user: UserEntity,
+    jwtOptions?: JwtSignOptions
+  ): Promise<UserToken> {
     const payload: UserPayload = {
       sub: user.id,
       email: user.email
     };
 
-    return { access_token: this.jwtService.sign(payload) };
+    return { access_token: this.jwtService.sign(payload, jwtOptions) };
   }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
@@ -45,7 +48,7 @@ export class AuthService {
 
     if (!user) throw new NotFoundError('Email não encontrado!');
 
-    const { access_token } = await this.signIn(user);
+    const { access_token } = await this.signIn(user, { expiresIn: '10m' });
 
     await this.emailService.sendUserSetPassword(user, access_token);
   }
