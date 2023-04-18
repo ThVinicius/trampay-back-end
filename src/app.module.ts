@@ -6,6 +6,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { PrismaModule } from './databases/prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
+import { UserBalanceModule } from './user-balance/user-balance.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { MailModule } from './mail/mail.module';
     PrismaModule,
     UserModule,
     AuthModule,
-    MailModule
+    MailModule,
+    UserBalanceModule
   ],
   controllers: [],
   providers: [
