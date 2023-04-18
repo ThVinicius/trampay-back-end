@@ -11,10 +11,23 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  UserBalance UserBalance[]
 
   @@map("users")
+}
+
+model UserBalance {
+  id        Int       @id @default(autoincrement())
+  user_id   Int
+  document  String
+  balance   Float
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime?
+  user      User      @relation(fields: [user_id], references: [id])
+
+  @@map("users_balance")
 }
