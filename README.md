@@ -60,6 +60,7 @@ Esse projeto foi feito baseado no processo seletivo de desenvolvedor na Trampay
 - Recuperação de senha
   - Com envio de email para recuperar ela
 - Upload de arquivo CSV
+  - Na pasta public/csv estão alguns exemplos de arquivos csv aceitos pelo back-end
 - Testes unitários com cobertura de 100% na camada de serviços
 - Aplicação com docker
 
