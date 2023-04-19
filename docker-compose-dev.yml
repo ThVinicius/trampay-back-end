@@ -1,0 +1,24 @@
+services:
+  postgres_development:
+    container_name: postgres_development
+    image: postgres
+    restart: always
+    ports:
+      - 6022:5432
+    env_file:
+      - .env
+    volumes:
+      - pg:/var/lib/postgresql/data
+
+  back_end_development:
+    container_name: back_end_development
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres_development
+    env_file:
+      - .env
+
+volumes:
+  pg:
