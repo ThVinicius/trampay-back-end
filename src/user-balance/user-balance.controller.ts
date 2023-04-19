@@ -26,6 +26,6 @@ export class UserBalanceController {
     file: Express.Multer.File,
     @CurrentUser() user: UserEntity
   ) {
-    return await this.service.handleCreate(file, user.id);
+    return await this.service.handleCreate(file.buffer, user.id);
   }
 }

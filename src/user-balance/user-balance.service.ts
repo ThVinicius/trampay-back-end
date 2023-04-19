@@ -9,7 +9,7 @@ import { promisify } from 'util';
 export class UserBalanceService {
   constructor(private repository: UserBalanceRepository) {}
 
-  async handleCreate(file: Express.Multer.File, userId: number) {
+  async handleCreate(file: Buffer, userId: number) {
     const csvArray = await this.csvToArray(file);
 
     const data = csvArray.map(item => ({ ...item, user_id: userId }));
@@ -21,15 +21,11 @@ export class UserBalanceService {
     return await this.create(data);
   }
 
-  private async create(data: UserBalanceEntity[]) {
+  async create(data: UserBalanceEntity[]) {
     return await this.repository.create(data);
   }
 
-  private async handleDeleteByDate(
-    userId: number,
-    date: Date,
-    documents: string[]
-  ) {
+  async handleDeleteByDate(userId: number, date: Date, documents: string[]) {
     await this.repository.updateDeletedAtByCreatedAtAndUserIdAndDocuments(
       date,
       userId,
@@ -37,10 +33,10 @@ export class UserBalanceService {
     );
   }
 
-  private async csvToArray(file: Express.Multer.File) {
+  async csvToArray(file: Buffer) {
     const results: { documento: string; saldo: number }[] = [];
 
-    const stream = Readable.from(file.buffer);
+    const stream = Readable.from(file);
 
     stream.pipe(csv({ separator: ',' })).on('data', data => results.push(data));
 
